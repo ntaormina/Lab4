@@ -5,8 +5,12 @@
  *      Author: C15Nikolas.Taormina
  */
 #include "lcd.h"
+#include <msp430.h>
 
 #define RS_MASK 0x40
+char LCDCON;
+char LCDDATA;
+char LCDSEND;
 
 void LCDinit()
 {
@@ -82,11 +86,11 @@ void LCD_write_4(char byteToSend)
 {
 	unsigned char sendByte = byteToSend;
 
-	sendByte &= 0xF0;
+	sendByte &= 0x0F;
 
 	sendByte |= LCDCON;
 
-	sendByte &= 0xF0;
+	sendByte &= 0x7f;
 
 	SPI_send(sendByte);
 
@@ -129,9 +133,9 @@ void initSPI() {
 
 	UCB0CTL0 |= UCCKPH | UCMSB | UCMST | UCSYNC;
 
-	UCB0CTL1 |= UCSSEL1 | UCSSEL0;
+	UCB0CTL1 |= UCSSEL1;
 
-	UCB0STAT |= UCLISTEN;
+	//UCB0STAT |= UCLISTEN;
 
 	P1DIR |= BIT0;
 
@@ -162,4 +166,43 @@ void delayMilli(){
 }
 
 
+void writeString(char string[]){
+	unsigned int length, count = 0;
+
+
+
+	length = getStringLength(string);
+
+	while(count < length){
+		writeDataByte(string[count]);
+		count++;
+
+	}
+}
+unsigned int getStringLength(char string[]){
+	unsigned int i = 0;
+	while(string[i] != 0){
+		i++;
+	}
+	return i;
+}
+
+void cursorToLineOne(){
+	writeCommandByte(0x02);
+}
+
+void cursorToLineTwo(){
+	writeCommandByte(0xC0);
+}
+
+void scrollString(char string[], int stringLength){
+	int iterator = 0;
+	int helperChar = string[0];
+
+	for(iterator; iterator < stringLength; iterator++){
+		string[iterator] = string[iterator + 1];
+	}
+	string[stringLength - 1] = helperChar;
+
+}
 

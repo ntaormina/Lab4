@@ -20,13 +20,29 @@ void cursorToLineOne();
 
 void writeChar(char asciiChar);
 
-void writeString(char * string);
+void writeString(char string[]);
 
-void scrollString(char * string1, char * string2);
+void scrollString(char string1[], int stringLength);
 
 void set_SS_hi();
 
 void set_SS_lo();
+
+void writeCommandNibble(char commandNibble);
+
+void writeCommandByte(char commandByte);
+
+void writeDataByte(char dataByte);
+
+void LCD_write_8(char byteToSend);
+
+void LCD_write_4(char byteToSend);
+
+void SPI_send(char byteToSend);
+
+void delayMilli();
+
+unsigned int getStringLength(char string[]);
 
 
 #endif /* LCD_H_ */
